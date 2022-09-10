@@ -1,0 +1,10 @@
+{
+  "debug": true,
+  "embed": {
+    "color": "#FFFFFF"
+  },
+  "options": {
+    "fr_test": "C'est un test",
+    "en_test": "This is a test"
+  }
+}
