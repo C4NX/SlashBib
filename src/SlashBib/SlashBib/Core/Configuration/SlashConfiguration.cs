@@ -7,11 +7,10 @@ namespace SlashBib.Core.Configuration;
 
 public class SlashConfiguration
 {
-    public const string LangSelectDefaultName = "def";
-
     [JsonIgnore] private JsonSerializer? _serializer;
     [JsonIgnore] private string? _filename;
-    
+    [JsonIgnore] private string _cache_default_lang = "en";
+
     private Dictionary<string, string?>? _secretData;
     
     [JsonProperty("options")] private Dictionary<string, JToken?>? _options;
@@ -32,14 +31,18 @@ public class SlashConfiguration
     private SlashConfiguration LoadFile(string filename)
     {
         _serializer ??= JsonSerializer.CreateDefault();
-        
         _filename = filename;
+        LanguagesNames?.Clear();
 
         using (FileStream fs = File.OpenRead(filename))
         {
             using (StreamReader reader = new StreamReader(fs))
             {
                 _serializer.Populate(reader, this);
+
+                // load the first language name in the _cache_default_lang
+                if (LanguagesNames?.Count > 0)
+                    _cache_default_lang = LanguagesNames[0];
             }
         }
 
@@ -92,4 +95,11 @@ public class SlashConfiguration
 
     public IEnumerable<string> GetOptionsNames()
         => _options?.Keys ?? Enumerable.Empty<string>();
+
+    /// <summary>
+    /// Get the default language name, by default it's 'en'
+    /// </summary>
+    /// <returns>the language name id</returns>
+    public string GetDefaultLanguage()
+        => _cache_default_lang;
 }

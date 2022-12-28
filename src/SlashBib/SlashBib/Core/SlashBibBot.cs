@@ -2,7 +2,9 @@ using System.Runtime.InteropServices;
 using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
+using DSharpPlus.Exceptions;
 using DSharpPlus.SlashCommands;
+using DSharpPlus.SlashCommands.EventArgs;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -84,8 +86,27 @@ public class SlashBibBot
 
     private void ConfigureExtension()
     {
-        _discordClient.UseSlashCommands()
-            .RegisterCommands(typeof(Program).Assembly);
+        var slash = _discordClient.UseSlashCommands();
+        slash.RegisterCommands(typeof(Program).Assembly);
+
+        slash.SlashCommandErrored += OnCommandErrored;
+    }
+
+    private async Task OnCommandErrored(SlashCommandsExtension sender, SlashCommandErrorEventArgs e)
+    {
+        DiscordEmbed errorEmbed = Embeder.CreateError(this, e.Exception, e.Context.User);
+        try
+        {
+            await e.Context.CreateResponseAsync(errorEmbed, true);
+        }
+        catch (BadRequestException)
+        {
+            if (e.Context.Channel.Type == ChannelType.Text) {
+                await e.Context.Channel.SendMessageAsync(errorEmbed);
+            }
+        }
+
+        e.Handled = true;
     }
 
     private void ConfigureHandlers()

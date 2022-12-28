@@ -17,20 +17,20 @@ public class CoreSlashCommands : ApplicationCommandModule
         await ctx.CreateResponseAsync(
             instance.GetEmbedBuilder()
                 .WithTitle("📃 Information")
-                .WithDescription("Made with love by NX 💜")
+                .WithDescription("Made with love by NX#2747 💜")
                 .AddField("💻 System"
                     , $"Runtime: {Formatter.InlineCode(RuntimeInformation.Version)}\nOS: {Formatter.InlineCode(System.Runtime.InteropServices.RuntimeInformation.OSDescription)}\nPing: {Formatter.InlineCode(ctx.Client.Ping.ToString())}")
                 .AddField("🖼 Discord",
                     $"Guilds: {Formatter.InlineCode(ctx.Client.Guilds.Count.ToString())}\nActivity: {Formatter.InlineCode(instance.Activity.Count.ToString())}\r\nCommands: {Formatter.InlineCode(GetCommandsCount(ctx.SlashCommandsExtension).ToString())}"), true);
     }
 
-    [SlashCommand("reload", "Owner: reload me !")]
+    [SlashCommand("reload", "Reload all the configuration (Owner only)")]
     [SlashRequireOwner]
     public async Task OwnerReload(InteractionContext ctx)
     {
         await SlashBibBot.GetInstance()
             .ReloadAsync();
-        await ctx.CreateResponseAsync("Ok.", true);
+        await ctx.CreateResponseAsync(Translator.Translate("reload"), true);
     }
 
     private static long GetCommandsCount(SlashCommandsExtension? ext)

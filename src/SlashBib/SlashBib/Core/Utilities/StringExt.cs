@@ -15,5 +15,8 @@ namespace SlashBib.Core.Utilities
                 : values.Aggregate(value,
                     (current, parameter) => current.Replace("{" + parameter.Key + "}", parameter.Value.ToString()));
         }
+
+        public static string? WithLength(this string? value, int maxLength)
+            => value?.Substring(0, Math.Min(value.Length, maxLength));
     }
 }
