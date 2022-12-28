@@ -1,8 +1,12 @@
 {
   "debug": true,
   "embed": {
-    "color": "#FFFFFF"
+    "color": "#3236a8"
   },
+  "langs": [
+    "fr",
+    "en"
+  ],
   "options": {
     "fr_test": "C'est un test",
     "en_test": "This is a test"

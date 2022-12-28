@@ -21,7 +21,9 @@ public class SlashBibBot
     private readonly SlashConfiguration _configuration;
     private ILogger _logger;
     private LoggingLevelSwitch? _loggingLevelSwitch;
-    
+    private readonly ActivitySwitcher _activitySwitcher;
+
+
     private static SlashBibBot? _instance;
     
     public bool IsDebug
@@ -42,6 +44,9 @@ public class SlashBibBot
     public SlashConfiguration Configuration
         => _configuration;
 
+    public ActivitySwitcher Activity
+        => _activitySwitcher;
+
     private SlashBibBot(SlashConfiguration configuration, bool setLoggerAsGlobal = true)
     {
         _configuration = configuration;
@@ -55,14 +60,11 @@ public class SlashBibBot
                     ?? throw new KeyNotFoundException($"'TOKEN' missing in {configuration.SecretFilename}"),
             LoggerFactory = new SerilogLoggerFactory(_logger)
         });
-        
+
+        _activitySwitcher = new ActivitySwitcher(this);
+
         ConfigureHandlers();
         ConfigureExtension();
-
-        var names = CommandHelper.GetLanguagesNames(this)
-            .ToArray();
-        var test = _configuration.GetOption<string>("fr_test");
-        
         _instance = this;
     }
 
@@ -80,7 +82,7 @@ public class SlashBibBot
             Log.Logger = _logger;
     }
 
-    public void ConfigureExtension()
+    private void ConfigureExtension()
     {
         _discordClient.UseSlashCommands()
             .RegisterCommands(typeof(Program).Assembly);
@@ -89,6 +91,12 @@ public class SlashBibBot
     private void ConfigureHandlers()
     {
         _discordClient.Ready += DiscordClientOnReady;
+        _discordClient.Heartbeated += DiscordClientOnHeartbeated;
+    }
+
+    private async Task DiscordClientOnHeartbeated(DiscordClient sender, HeartbeatEventArgs e)
+    {
+        await _activitySwitcher.Switch();
     }
 
     public static SlashBibBot GetInstance()
@@ -109,6 +117,8 @@ public class SlashBibBot
     {
         _configuration.Reload();
         
+        _logger.Information("SlashBib was reloaded.");
+
         //TODO: Reload
         await Task.CompletedTask;
     }

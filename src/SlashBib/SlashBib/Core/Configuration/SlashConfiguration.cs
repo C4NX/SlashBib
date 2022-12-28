@@ -7,6 +7,8 @@ namespace SlashBib.Core.Configuration;
 
 public class SlashConfiguration
 {
+    public const string LangSelectDefaultName = "def";
+
     [JsonIgnore] private JsonSerializer? _serializer;
     [JsonIgnore] private string? _filename;
     
