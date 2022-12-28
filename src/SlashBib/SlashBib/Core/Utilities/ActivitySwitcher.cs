@@ -11,7 +11,6 @@ namespace SlashBib.Core.Utilities
     public class ActivitySwitcher
     {
         private IList<DiscordActivity> _activities;
-        private readonly Dictionary<string, object> _dynData;
         private readonly SlashBibBot _instance;
 
         public int Count
@@ -23,16 +22,6 @@ namespace SlashBib.Core.Utilities
             _activities = activities == null 
                 ? new List<DiscordActivity>()
                 : new List<DiscordActivity>(activities);
-            _dynData = new Dictionary<string, object>();
-        }
-
-        public object? this[string key]
-        {
-            get 
-                => _dynData.ContainsKey(key) ? _dynData[key] : null;
-            set
-                => _dynData[key] = value
-                                   ?? string.Empty;
         }
 
         public async Task Switch(Random? random = null)
@@ -40,13 +29,26 @@ namespace SlashBib.Core.Utilities
             if (_activities.Count > 0)
             {
                 var rowActivity = _activities[(random ?? new Random()).Next(0, _activities.Count)];
-                var applyActivity = new DiscordActivity(rowActivity.Name.NamedFormat(_dynData), rowActivity.ActivityType)
+                var applyActivity = new DiscordActivity(_instance.Strings.ToString(rowActivity.Name), rowActivity.ActivityType)
                 {
                     StreamUrl = rowActivity.StreamUrl
                 };
 
                 await _instance.Discord.UpdateStatusAsync(applyActivity);
             }
+        }
+
+        public class DynamicValue
+        {
+            private readonly Func<object> _valueFactory;
+
+            public DynamicValue(Func<object> factory)
+            {
+                _valueFactory = factory;
+            }
+
+            public override string? ToString()
+                => _valueFactory().ToString();
         }
     }
 }

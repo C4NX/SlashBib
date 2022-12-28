@@ -13,7 +13,7 @@ public class SlashConfiguration
 
     private Dictionary<string, string?>? _secretData;
     
-    [JsonProperty("options")] private Dictionary<string, JToken?>? _options;
+    [JsonProperty("options")] private readonly Dictionary<string, JToken?>? _options;
         
     [JsonProperty("secret")]
     public string SecretFilename { get; private set; }
@@ -26,6 +26,7 @@ public class SlashConfiguration
     private SlashConfiguration()
     {
         _secretData = new Dictionary<string, string?>();
+        _options = new Dictionary<string, JToken?>();
     }
 
     private SlashConfiguration LoadFile(string filename)

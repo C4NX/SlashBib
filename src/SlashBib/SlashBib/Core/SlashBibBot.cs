@@ -23,6 +23,7 @@ public class SlashBibBot
     private readonly SlashConfiguration _configuration;
     private ILogger _logger;
     private LoggingLevelSwitch? _loggingLevelSwitch;
+    private readonly DynamicStringDataContainer _dynamicStrings;
     private readonly ActivitySwitcher _activitySwitcher;
 
 
@@ -49,6 +50,9 @@ public class SlashBibBot
     public ActivitySwitcher Activity
         => _activitySwitcher;
 
+    public DynamicStringDataContainer Strings
+        => _dynamicStrings;
+
     private SlashBibBot(SlashConfiguration configuration, bool setLoggerAsGlobal = true)
     {
         _configuration = configuration;
@@ -63,7 +67,16 @@ public class SlashBibBot
             LoggerFactory = new SerilogLoggerFactory(_logger)
         });
 
-        _activitySwitcher = new ActivitySwitcher(this);
+        _dynamicStrings = new DynamicStringDataContainer();
+        _dynamicStrings["bot.ping"] = new DynamicStringDataContainer.DynamicValue(() => _discordClient.Ping);
+        _dynamicStrings["bot.username"] = new DynamicStringDataContainer.DynamicValue(() => _discordClient.CurrentUser.Username);
+        _dynamicStrings["guilds.count"] = new DynamicStringDataContainer.DynamicValue(() => _discordClient.Guilds.Count);
+
+        _activitySwitcher = new ActivitySwitcher(this, new DiscordActivity[] {
+            new DiscordActivity("{bot.username} is back !!"),
+            new DiscordActivity("{bot.ping}ms, wow"),
+            new DiscordActivity("On {guilds.count} towns !"),
+        });
 
         ConfigureHandlers();
         ConfigureExtension();

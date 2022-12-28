@@ -1,4 +1,5 @@
 using SlashBib.Core.Configuration;
+using System.ComponentModel.DataAnnotations;
 
 namespace SlashBib.Core.Utilities;
 
@@ -11,19 +12,23 @@ public static class Translator
     /// <param name="lang">the lang name or null</param>
     /// <param name="guildId">TODO</param>
     /// <returns>The translated string</returns>
-    public static string Translate(string? key, string? lang = null)
+    public static string Translate(string? key, string? lang = null, bool dynamicTranslation = true)
     {
         if (key is null)
             return "<null>";
 
-        SlashConfiguration configuration = SlashBibBot.GetInstance().Configuration;
+        string value = string.Empty;
+        SlashBibBot instance = SlashBibBot.GetInstance();
+        SlashConfiguration configuration = instance.Configuration;
         if (lang is null)
         {
             string keyPath = $"{configuration.GetDefaultLanguage()}_{key}";
-            return configuration.GetOption<string>(keyPath) ?? keyPath;
+            value = configuration.GetOption<string>(keyPath) ?? keyPath;
         }
         else
-            return configuration.GetOption<string>($"{lang}_{key}") ?? $"{key} (as {lang})";
+            value = configuration.GetOption<string>($"{lang}_{key}") ?? $"{key} (as {lang})";
+
+        return dynamicTranslation ? instance.Strings.ToString(value) : value;
     }
 
     /// <summary>

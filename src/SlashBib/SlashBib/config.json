@@ -8,6 +8,6 @@
     "fr"
   ],
   "options": {
-    "en_reload": "The bot has been reloaded 🤖",
+    "en_reload": "The bot has been reloaded with a ping of {bot.ping} 🤖",
   }
 }
