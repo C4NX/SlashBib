@@ -14,7 +14,6 @@ namespace SlashBib.Core.Utilities
     public class DynamicStringDataContainer : IEnumerable<string>
     {
         private readonly Dictionary<string, object> _dynData;
-        private readonly ILogger _logger;
 
         public int Count
             => _dynData.Count;
@@ -23,7 +22,6 @@ namespace SlashBib.Core.Utilities
 
         public DynamicStringDataContainer() { 
             _dynData = new Dictionary<string, object>();
-            _logger = Log.ForContext<DynamicStringDataContainer>();
             ReadablitySettings = new ReadablitySettings();
         }
 
@@ -32,15 +30,12 @@ namespace SlashBib.Core.Utilities
             get
                 => _dynData.ContainsKey(key) ? _dynData[key] : null;
             set
-            {
-                _dynData[key] = value ?? string.Empty;
-                _logger.Debug("Setting up string {key} with a {type} : {value}", key, value?.GetType().Name, (value is string) ? value : "<obj>");
-            }
+                => _dynData[key] = value ?? string.Empty;
         }
 
-        public string ToString(string value, ReadablitySettings? readablitySettings = null)
+        public string ToString(string value, ReadablitySettings? readablitySettings = null, params object[] args)
         {
-            return value.NamedFormat(_dynData, readablitySettings ?? ReadablitySettings);
+            return ValuesFormatter.Format(value, _dynData, args, readablitySettings ?? ReadablitySettings);
         }
 
         public IEnumerator<string> GetEnumerator()
@@ -72,7 +67,7 @@ namespace SlashBib.Core.Utilities
             /// </summary>
             /// <returns>the value generated</returns>
             public override string? ToString()
-                => StringExt.ReadableToString(_valueFactory(), _readablitySettings);
+                => ValuesFormatter.ReadableToString(_valueFactory(), _readablitySettings);
         }
     }
 }

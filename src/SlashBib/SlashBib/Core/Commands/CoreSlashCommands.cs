@@ -1,4 +1,5 @@
 ﻿using DSharpPlus;
+using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using DSharpPlus.SlashCommands.Attributes;
 using Emzi0767.Utilities;
@@ -15,16 +16,28 @@ public class CoreSlashCommands : ApplicationCommandModule
         var instance = SlashBibBot.GetInstance();
 
         await ctx.CreateResponseAsync(
-            instance.GetEmbedBuilder()
-                .WithTitle("📃 Information")
-                .WithDescription("Made with love by NX#2747 💜")
-                .WithThumbnail(ctx.Client.CurrentUser.AvatarUrl)
-                .AddField("💻 System"
-                    , instance.Strings.ToString("Runtime: {runtime.dotnet|code}\nOS: {runtime.os|code}\nPing: {bot.ping|code}ms"))
-                .AddField("🖼 Discord",
-                    instance.Strings.ToString("Guilds: {bot.guild.count|code}\nActivity: {bot.activity.count|code}\r\nCommands: " + $"{Formatter.InlineCode(GetCommandsCount(ctx.SlashCommandsExtension).ToString())}"))
-                .AddField("🚗 Engine",
-                    instance.Strings.ToString("Strings: {bot.strings.count|code}\nLanguages: {bot.langs|code|upper}")), true);
+            instance.GetEmbed()
+                .AddField("💻 System", "info_1", true, false)
+                .AddField("🖼 Discord", "info_2", true, false)
+                .AddField("🚗 Engine", "info_3", true, false)
+                .WithDescription("love", false)
+                .Builder
+                    .WithTitle("📃 Information")
+                    .WithThumbnail(ctx.Client.CurrentUser.AvatarUrl), true);
+    }
+
+    [SlashCommand("avatar", "Show avatar")]
+    [DescriptionLocalization(Localization.French, "Affiche un avatar.")]
+    public async Task Avatar(InteractionContext ctx, [Option("user", "What user ?")] DiscordUser user)
+    {
+        var instance = SlashBibBot.GetInstance();
+
+        await ctx.CreateResponseAsync(
+            instance.GetEmbed()
+                .WithDescription("avatar", false, "test")
+                .Builder
+                    .WithTitle($"{user.Username}'s Avatar")
+                    .WithImageUrl(ctx.Client.CurrentUser.GetAvatarUrl(ImageFormat.Png)), true);
     }
 
     [SlashCommand("reload", "Reload all the configuration (Owner only)")]

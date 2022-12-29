@@ -69,6 +69,21 @@ public class SlashBibBot
         _dynamicStrings = new DynamicStringDataContainer();
         _dynamicStrings.ReadablitySettings.DiscordReady = true;
 
+        ConfigureStrings();
+        ConfigureHandlers();
+        ConfigureExtension();
+
+        _activitySwitcher = new ActivitySwitcher(this, new DiscordActivity[] {
+            new DiscordActivity("{bot.username} is back !!"),
+            new DiscordActivity("{bot.ping}ms, wow"),
+            new DiscordActivity("On {guilds.count} towns !"),
+        });
+
+        _instance = this;
+    }
+
+    private void ConfigureStrings()
+    {
         _dynamicStrings["bot.ping"] = new DynamicStringDataContainer.DynamicValue(() => _discordClient.Ping);
         _dynamicStrings["bot.username"] = new DynamicStringDataContainer.DynamicValue(() => _discordClient.CurrentUser.Username);
         _dynamicStrings["bot.version"] = typeof(Program).Assembly.GetName().Version?.ToString() ?? "Missing Version";
@@ -78,18 +93,6 @@ public class SlashBibBot
         _dynamicStrings["runtime.os"] = System.Runtime.InteropServices.RuntimeInformation.OSDescription;
         _dynamicStrings["bot.strings.count"] = new DynamicStringDataContainer.DynamicValue(() => _dynamicStrings.Count);
         _dynamicStrings["bot.langs"] = new DynamicStringDataContainer.DynamicValue(() => Translator.GetAvailablesLanguages());
-
-        _dynamicStrings["bot.strings"] = Newtonsoft.Json.Linq.JToken.FromObject(_dynamicStrings); // will serialize this value in markdown/json
-
-        _activitySwitcher = new ActivitySwitcher(this, new DiscordActivity[] {
-            new DiscordActivity("{bot.username} is back !!"),
-            new DiscordActivity("{bot.ping}ms, wow"),
-            new DiscordActivity("On {guilds.count} towns !"),
-        });
-
-        ConfigureHandlers();
-        ConfigureExtension();
-        _instance = this;
     }
 
     private void ConfigureLogger(bool setGlobal)
@@ -172,19 +175,23 @@ public class SlashBibBot
         , typeof(Program).Assembly.GetName().Version
         , Emzi0767.Utilities.RuntimeInformation.Version
         , RuntimeInformation.RuntimeIdentifier);
-        
-        if(IsDebug)
+
+
+        if (IsDebug)
+        {
             _logger.Debug("SlashBib is running on debug mode");
+            _logger.Debug("Strings: {strings}", _dynamicStrings);
+        }
         
         await _discordClient.ConnectAsync();
 
         await Task.Delay(-1);
     }
 
-    public DiscordEmbedBuilder GetEmbedBuilder()
+    public SlashDiscordEmbedBuilder GetEmbed()
         => _configuration.DefaultEmbed == null
-            ? new DiscordEmbedBuilder()
-            : new DiscordEmbedBuilder(_configuration.DefaultEmbed);
+            ? new SlashDiscordEmbedBuilder()
+            : new SlashDiscordEmbedBuilder(_configuration.DefaultEmbed);
 
     public static SlashBibBot Create(string configFilename)
     {

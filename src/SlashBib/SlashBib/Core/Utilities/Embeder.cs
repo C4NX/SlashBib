@@ -18,7 +18,8 @@ namespace SlashBib.Core.Utilities
                 : slashBibBot.Discord.CurrentApplication.Owners.Any(x=>discordUser.Id == x.Id);
             string errorMessage = exception.Message;
 
-            var embedBuilder = slashBibBot.GetEmbedBuilder()
+            var embedBuilder = slashBibBot.GetEmbed()
+                            .Builder
                             .WithTitle("An error has occurred.")
                             .WithDescription("We are sorry for this inconvenience, it will not happen again.")
                             .AddField("Message", Formatter.BlockCode(errorMessage.WithLength(1000)))
