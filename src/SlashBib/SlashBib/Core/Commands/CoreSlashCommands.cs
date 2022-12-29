@@ -18,10 +18,13 @@ public class CoreSlashCommands : ApplicationCommandModule
             instance.GetEmbedBuilder()
                 .WithTitle("📃 Information")
                 .WithDescription("Made with love by NX#2747 💜")
+                .WithThumbnail(ctx.Client.CurrentUser.AvatarUrl)
                 .AddField("💻 System"
-                    , $"Runtime: {Formatter.InlineCode(RuntimeInformation.Version)}\nOS: {Formatter.InlineCode(System.Runtime.InteropServices.RuntimeInformation.OSDescription)}\nPing: {Formatter.InlineCode(ctx.Client.Ping.ToString())}")
+                    , instance.Strings.ToString("Runtime: {runtime.dotnet|code}\nOS: {runtime.os|code}\nPing: {bot.ping|code}ms"))
                 .AddField("🖼 Discord",
-                    $"Guilds: {Formatter.InlineCode(ctx.Client.Guilds.Count.ToString())}\nActivity: {Formatter.InlineCode(instance.Activity.Count.ToString())}\r\nCommands: {Formatter.InlineCode(GetCommandsCount(ctx.SlashCommandsExtension).ToString())}"), true);
+                    instance.Strings.ToString("Guilds: {bot.guild.count|code}\nActivity: {bot.activity.count|code}\r\nCommands: " + $"{Formatter.InlineCode(GetCommandsCount(ctx.SlashCommandsExtension).ToString())}"))
+                .AddField("🚗 Engine",
+                    instance.Strings.ToString("Strings: {bot.strings.count|code}\nLanguages: {bot.langs|code|upper}")), true);
     }
 
     [SlashCommand("reload", "Reload all the configuration (Owner only)")]

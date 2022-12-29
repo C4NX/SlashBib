@@ -26,7 +26,6 @@ public class SlashBibBot
     private readonly DynamicStringDataContainer _dynamicStrings;
     private readonly ActivitySwitcher _activitySwitcher;
 
-
     private static SlashBibBot? _instance;
     
     public bool IsDebug
@@ -68,9 +67,19 @@ public class SlashBibBot
         });
 
         _dynamicStrings = new DynamicStringDataContainer();
+        _dynamicStrings.ReadablitySettings.DiscordReady = true;
+
         _dynamicStrings["bot.ping"] = new DynamicStringDataContainer.DynamicValue(() => _discordClient.Ping);
         _dynamicStrings["bot.username"] = new DynamicStringDataContainer.DynamicValue(() => _discordClient.CurrentUser.Username);
-        _dynamicStrings["guilds.count"] = new DynamicStringDataContainer.DynamicValue(() => _discordClient.Guilds.Count);
+        _dynamicStrings["bot.version"] = typeof(Program).Assembly.GetName().Version?.ToString() ?? "Missing Version";
+        _dynamicStrings["bot.guild.count"] = new DynamicStringDataContainer.DynamicValue(() => _discordClient.Guilds.Count);
+        _dynamicStrings["bot.activity.count"] = new DynamicStringDataContainer.DynamicValue(() => _activitySwitcher?.Count ?? -1);
+        _dynamicStrings["runtime.dotnet"] = Emzi0767.Utilities.RuntimeInformation.Version;
+        _dynamicStrings["runtime.os"] = System.Runtime.InteropServices.RuntimeInformation.OSDescription;
+        _dynamicStrings["bot.strings.count"] = new DynamicStringDataContainer.DynamicValue(() => _dynamicStrings.Count);
+        _dynamicStrings["bot.langs"] = new DynamicStringDataContainer.DynamicValue(() => Translator.GetAvailablesLanguages());
+
+        _dynamicStrings["bot.strings"] = Newtonsoft.Json.Linq.JToken.FromObject(_dynamicStrings); // will serialize this value in markdown/json
 
         _activitySwitcher = new ActivitySwitcher(this, new DiscordActivity[] {
             new DiscordActivity("{bot.username} is back !!"),
