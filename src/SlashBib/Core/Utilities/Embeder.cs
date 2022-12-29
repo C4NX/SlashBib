@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using Newtonsoft.Json.Linq;
+using SlashBib.Core.Utilities.Exts;
 using System;
 using System.Collections.Generic;
 using System.Linq;

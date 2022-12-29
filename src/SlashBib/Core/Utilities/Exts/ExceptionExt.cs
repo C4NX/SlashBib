@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SlashBib.Core.Utilities
+namespace SlashBib.Core.Utilities.Exts
 {
     internal static class ExceptionExt
     {

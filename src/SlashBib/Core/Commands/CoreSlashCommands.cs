@@ -3,6 +3,7 @@ using DSharpPlus.Entities;
 using DSharpPlus.SlashCommands;
 using DSharpPlus.SlashCommands.Attributes;
 using Emzi0767.Utilities;
+using SixLabors.ImageSharp.Formats.Webp;
 using SlashBib.Core.Utilities;
 
 namespace SlashBib.Core.Commands;
@@ -38,6 +39,23 @@ public class CoreSlashCommands : ApplicationCommandModule
                 .Builder
                     .WithTitle($"{user.Username}'s Avatar")
                     .WithImageUrl(user.GetAvatarUrl(ImageFormat.Png)), true);
+    }
+
+    [SlashCommand("test", "TestRender")]
+    public async Task Test(InteractionContext ctx)
+    {
+        var instance = SlashBibBot.GetInstance();
+
+        var img = new ImageRenderer(false);
+
+        var inte = new DiscordInteractionResponseBuilder();
+        inte.AddEmbed(instance.GetEmbed()
+                .WithDescription("test", false)
+                .Builder);
+
+        inte.AddFile("image.webp", await img.RenderStreamAsync(new SixLabors.ImageSharp.Size(100, 100), new WebpEncoder()));
+
+        await ctx.CreateResponseAsync(inte);
     }
 
     [SlashCommand("reload", "Reload all the configuration (Owner only)")]
