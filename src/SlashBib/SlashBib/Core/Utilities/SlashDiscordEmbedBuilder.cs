@@ -10,21 +10,18 @@ namespace SlashBib.Core.Utilities
     public class SlashDiscordEmbedBuilder
     {
         private DiscordEmbedBuilder _builder;
-        private SlashBibBot _slashBib;
 
         public DiscordEmbedBuilder Builder
             => _builder;
 
         public SlashDiscordEmbedBuilder()
         {
-            _slashBib = SlashBibBot.GetInstance();
             _builder = new DiscordEmbedBuilder();
         }
 
         public SlashDiscordEmbedBuilder(DiscordEmbed embed)
         {
             _builder = new DiscordEmbedBuilder(embed);
-            _slashBib = SlashBibBot.GetInstance();
         }
 
         public SlashDiscordEmbedBuilder AddField(string name,string valueKey, bool useGlobal, bool inline, params object[] args)

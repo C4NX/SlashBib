@@ -1,5 +1,7 @@
 ﻿using DSharpPlus;
+using DSharpPlus.Entities;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +18,7 @@ namespace SlashBib.Core.Utilities
     {
         public static string Format(string value, Dictionary<string, object>? values, object[] args, ReadablitySettings? readablitySettings = null)
         {
-            if(values != null)
+            if(values is not null)
             {
                 return Regex.Replace(value, @"{([^}]*)}", match => 
                 {
@@ -85,7 +87,7 @@ namespace SlashBib.Core.Utilities
                 case "lower":
                     return value.ToLower();
                 case "dump":
-                    Console.WriteLine($"Dump: {value}");
+                    Log.Debug("Dump: {value}", value);
                     return value;
                 default:
                     // try with custom filters
@@ -118,6 +120,10 @@ namespace SlashBib.Core.Utilities
             else if (obj is not string && typeof(IEnumerable<object>).IsAssignableFrom(obj.GetType()))
             {
                 return string.Join(',', Enumerable.ToArray((IEnumerable<object>)obj));
+            }
+            else if (obj is DiscordUser discordUser)
+            {
+                return discordUser.Mention;
             }
             else
             {

@@ -12,7 +12,8 @@
     "fr_reload": "Le robot a été relancé avec un ping de {bot.ping|bold}ms 🤖",
     "en_love": "Made with love by NX#2747 💜",
     "fr_love": "Fait avec amour par NX#2747 💜",
-    "fr_avatar":  "{:0|bold}",
+    "en_avatar": "Avatar of {:0}",
+    "fr_avatar": "Avatar de {:0}",
     "_info_1": "Runtime: {runtime.dotnet|code}\nOS: {runtime.os|code}\nPing: {bot.ping|code}ms",
     "_info_2": "Guilds: {bot.guild.count|code}\nActivity: {bot.activity.count|code}",
     "_info_3": "Strings: {bot.strings.count|code}\nLanguages: {bot.langs|code|upper}"

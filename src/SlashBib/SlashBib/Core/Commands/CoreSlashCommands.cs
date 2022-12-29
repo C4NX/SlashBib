@@ -34,10 +34,10 @@ public class CoreSlashCommands : ApplicationCommandModule
 
         await ctx.CreateResponseAsync(
             instance.GetEmbed()
-                .WithDescription("avatar", false, "test")
+                .WithDescription("avatar", false, user)
                 .Builder
                     .WithTitle($"{user.Username}'s Avatar")
-                    .WithImageUrl(ctx.Client.CurrentUser.GetAvatarUrl(ImageFormat.Png)), true);
+                    .WithImageUrl(user.GetAvatarUrl(ImageFormat.Png)), true);
     }
 
     [SlashCommand("reload", "Reload all the configuration (Owner only)")]
